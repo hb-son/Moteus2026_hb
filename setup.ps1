@@ -1,27 +1,47 @@
+$ErrorActionPreference = "Stop"
+
 Write-Host ""
 Write-Host "====================================="
 Write-Host " Moteus Windows 환경 설치 시작"
 Write-Host "====================================="
 Write-Host ""
 
-$ErrorActionPreference = "Stop"
-
-$py = Get-Command py -ErrorAction SilentlyContinue
-
-if (-not $py) {
-    Write-Host "Python Launcher(py)가 없습니다. winget으로 Python 설치를 시도합니다."
-
-    $winget = Get-Command winget -ErrorAction SilentlyContinue
-    if (-not $winget) {
-        Write-Host "winget이 없습니다. python.org에서 Python 3.12 이상을 설치하세요."
-        exit 1
+function Test-Python {
+    $py = Get-Command py -ErrorAction SilentlyContinue
+    if ($py) {
+        try {
+            py -3 --version
+            return $true
+        } catch {
+            return $false
+        }
     }
-
-    winget install -e --id Python.Python.3.12
-    Write-Host "Python 설치 완료. PowerShell을 닫고 다시 열어 같은 명령을 다시 실행하세요."
-    exit 0
+    return $false
 }
 
+if (-not (Test-Python)) {
+    Write-Host "Python이 없습니다. python.org 설치파일로 자동 설치합니다."
+
+    $installer = "$env:TEMP\python-3.12.8-amd64.exe"
+    $url = "https://www.python.org/ftp/python/3.12.8/python-3.12.8-amd64.exe"
+
+    Write-Host "Python 설치파일 다운로드 중..."
+    Invoke-WebRequest -Uri $url -OutFile $installer
+
+    Write-Host "Python 설치 중..."
+    Start-Process -FilePath $installer -ArgumentList "/quiet InstallAllUsers=0 PrependPath=1 Include_launcher=1 Include_pip=1" -Wait
+
+    Remove-Item $installer -Force -ErrorAction SilentlyContinue
+
+    Write-Host "Python 설치 완료."
+    Write-Host "현재 PowerShell에 PATH를 반영합니다."
+
+    $env:Path += ";$env:LOCALAPPDATA\Programs\Python\Python312"
+    $env:Path += ";$env:LOCALAPPDATA\Programs\Python\Python312\Scripts"
+    $env:Path += ";$env:LOCALAPPDATA\Programs\Python\Launcher"
+}
+
+Write-Host ""
 Write-Host "Python 확인:"
 py -3 --version
 
@@ -70,3 +90,4 @@ Write-Host "& `$HOME\moteus-venv\Scripts\Activate.ps1"
 Write-Host ""
 Write-Host "tview 실행:"
 Write-Host "tview"
+Write-Host ""
