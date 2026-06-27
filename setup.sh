@@ -48,7 +48,7 @@ echo "⚙️ moteus 설치 중..."
 python3 -m pip install --upgrade moteus
 
 echo "🖥️ tview 설치 중..."
-python3 -m pip install --upgrade moteus-pi3hat
+python3 -m pip install --upgrade moteus-gui
 
 echo ""
 echo "====================================="
@@ -59,7 +59,7 @@ python3 -m moteus.moteus_tool --version || true
 
 echo ""
 echo "tview 위치:"
-which tview || echo "⚠️ tview를 찾을 수 없습니다."
+which tview || echo "⚠️ tview 명령어는 없을 수 있습니다. 대신 python3 -m moteus_gui.tview 로 실행하세요."
 
 echo ""
 echo "====================================="
