@@ -60,6 +60,9 @@ python3 -m pip install --upgrade pip
 echo "⚙️ moteus 설치 중..."
 python3 -m pip install --upgrade moteus
 
+echo "🖥️ tview 설치 중..."
+python3 -m pip install --upgrade moteus-pi3hat
+
 # 8. 설치 확인
 echo ""
 echo "====================================="
